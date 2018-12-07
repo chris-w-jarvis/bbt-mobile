@@ -60,7 +60,7 @@ class Bloc extends Transformers {
     int totalWeight = _currentWeights.reduce((a, b) => a+b);
     print('$totalWeight');
     // probably don't need this object
-    print('sending {"weight":"${totalWeight.toString()}","reps":"$reps","liftname":"$liftName"} to server');
+    print('sending {"weight":"${totalWeight.toString()}","reps":"${_reps.value}","liftname":"${_liftName.value}"} to server');
 
   }
 

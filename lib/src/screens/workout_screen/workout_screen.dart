@@ -96,22 +96,20 @@ Widget repsMenu(Bloc bloc) {
 }
 
 Widget weightAnimation(double screenWidth, BuildContext context, Bloc bloc) {
-  // return GestureDetector(
-  //   onTap: () {
-  //     final snackBar = SnackBar(content: Text("PULL OFF A WEIGHT"));
-  //     Scaffold.of(context).showSnackBar(snackBar);
-  //     int currWeight = int.parse(bloc.weight.value);
-  //   },
-  //   child: Container(
-  //     padding: EdgeInsets.all(16.0),
-  //     child: Image.network('https://media.istockphoto.com/photos/concrete-wall-picture-id177414827?k=6&m=177414827&s=612x612&w=0&h=R_05Wjq5TRbhs1xnDvF_lOG14RzzLoO0A5EH1nl_oNk=',
-  //       width: screenWidth,
-  //       height: 250.0,
-  //     ),
-  //   )
-  // );
+
 
   // Rerender on all events from bloc.weightChanged
+
+//     return GestureDetector(
+//       onTap: () => bloc.removeWeight(-1),
+//       child: StreamBuilder(
+//         stream: bloc.weightChanged,
+//         builder: (context, snapshot) {
+//           return barbellAnimationFrame(bloc.weightOnBarbell, screenWidth);
+//         },
+//       ),
+//     );
+// }
 
   return StreamBuilder(
     stream: bloc.weightChanged,
@@ -119,9 +117,15 @@ Widget weightAnimation(double screenWidth, BuildContext context, Bloc bloc) {
       // return RaisedButton(
       //   child: !snapshot.hasData ? Text('45') : Text(bloc.weightOnBarbell.toString()),
       //   //child: Text("not implemented"),
-      //   onPressed: () => bloc.removeWeight(-1.0),
+      //   onPressed: () => bloc.removeWeight(-1),
       // );
-      return Center(child: barbellAnimationFrame(bloc.weightOnBarbell, screenWidth));
+      return GestureDetector(
+        onTap: () => bloc.removeWeight(-1),
+        child: Container(
+          padding: EdgeInsets.all(16.0),
+          child: barbellAnimationFrame(bloc.weightOnBarbell, screenWidth)
+        )
+      );
     },
   );
 }
@@ -138,16 +142,17 @@ Widget barbellAnimationFrame(int weight, double screenWidth) {
         each plate is added with a width and height in proportion to screen width
       advanced: animate each plate coming on and off (no plans for this at this time)
   */
+
   return Stack(
-    children: [
-      buildBarbellBackgroud(screenWidth),
-
-    ],
-  );
-}
-
-Widget buildBarbellBackgroud(double screenWidth) {
-  
+    alignment: const Alignment(0.6, 0.6),
+    children: <Widget>[
+      Container(
+        width: screenWidth,
+        height: 100.0,
+        color: Colors.red,
+      ),
+      Text('$weight')
+    ]);
 }
   
 determinePlates(int w) {
