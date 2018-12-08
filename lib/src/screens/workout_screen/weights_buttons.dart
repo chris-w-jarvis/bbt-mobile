@@ -6,7 +6,7 @@ import '../../state/bloc.dart';
 class Weights {
   final weights = new Map<String, Widget>();
 
-  Weights(double screenWidth, Bloc bloc) {
+  Weights(double screenWidth, double screenHeight, Bloc bloc) {
     weights['fortyfive'] = GestureDetector(
       onTap: () {
         bloc.addWeight(90);
@@ -14,7 +14,7 @@ class Weights {
       child: Image.asset(
         'assets/45btn.jpg',
         width: screenWidth/2.75,
-        height: screenWidth/2.75,
+        height: screenHeight/5,
       )
     );
     weights['twentyfive'] = GestureDetector(
@@ -24,8 +24,8 @@ class Weights {
       child: Image.asset(
         'assets/25btn.jpg',
         width: screenWidth/4,
-        height: screenWidth/4,
-        )
+        height: screenHeight/8,
+      )
     );
     weights['ten'] = GestureDetector(
       onTap: () {
@@ -33,7 +33,7 @@ class Weights {
       },
       child: Image.asset('assets/10btn.jpg',
         width: screenWidth/5,
-        height: screenWidth/5,)
+        height: screenHeight/10,)
     );
     weights['five'] = GestureDetector(
       onTap: () {
@@ -41,7 +41,7 @@ class Weights {
       },
       child: Image.asset('assets/5btn.jpg',
         width: screenWidth/6.5,
-        height: screenWidth/6.5,)
+        height: screenHeight/12,)
     );
     weights['twoandhalf'] = GestureDetector(
       onTap: () {
@@ -49,7 +49,7 @@ class Weights {
       },
       child: Image.asset('assets/2point5btn.jpg',
         width: screenWidth/7.5,
-        height: screenWidth/7.5,)
+        height: screenHeight/14,)
     );
   }
 

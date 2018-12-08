@@ -9,11 +9,12 @@ class WorkoutScreen extends StatelessWidget {
     final bloc = Provider.of(context);
 
     var screenWidth = MediaQuery.of(context).size.width;
+    var screenHeigth = MediaQuery.of(context).size.height;
     return ListView(
       children: <Widget>[
+        weightAnimation(screenWidth, screenHeigth, context, bloc),
         liftAndRepsRow(bloc),
-        weightAnimation(screenWidth, context, bloc),
-        weightButtonsRow(screenWidth, bloc),
+        weightButtonsRow(screenWidth, screenHeigth, bloc),
         //notesRow(bloc),
         addSetButton(bloc)
       ],
@@ -95,7 +96,7 @@ Widget repsMenu(Bloc bloc) {
   );
 }
 
-Widget weightAnimation(double screenWidth, BuildContext context, Bloc bloc) {
+Widget weightAnimation(double screenWidth, double screenHeight, BuildContext context, Bloc bloc) {
 
 
   // Rerender on all events from bloc.weightChanged
@@ -123,14 +124,15 @@ Widget weightAnimation(double screenWidth, BuildContext context, Bloc bloc) {
         onTap: () => bloc.removeWeight(-1),
         child: Container(
           padding: EdgeInsets.all(16.0),
-          child: barbellAnimationFrame(bloc.weightOnBarbell, screenWidth)
+          // -32 is to center it against the padding
+          child: barbellAnimationFrame(bloc.weightOnBarbell, screenWidth-32, screenHeight)
         )
       );
     },
   );
 }
 
-Widget barbellAnimationFrame(int weight, double screenWidth) {
+Widget barbellAnimationFrame(int weight, double screenWidth, double screenHeight) {
   final plates = determinePlates(weight-45);
   print(plates);
 
@@ -144,18 +146,34 @@ Widget barbellAnimationFrame(int weight, double screenWidth) {
   */
 
   return Stack(
-    alignment: const Alignment(0.6, 0.6),
+    overflow: Overflow.clip,
     children: <Widget>[
       Container(
         width: screenWidth,
-        height: 100.0,
-        color: Colors.red,
+        height: screenHeight*.25,
+        color: Colors.red[300],
       ),
-      Text('$weight')
-    ]);
+      // just for testing to be able to see weight
+      Positioned(
+        child: Text('$weight'),
+        top: 0.0,
+        left: 0.0,
+      ),
+      renderPlates(plates, screenWidth, screenHeight)
+    ]
+  );
+}
+
+Widget renderPlates(Map plates, double screenWidth, double screenHeight) {
+  return Positioned(
+    child: Image.asset('assets/45.jpg'),
+    // for now this is where the weights
+    left: screenWidth*.35,
+    right: screenWidth*.35,
+  );
 }
   
-determinePlates(int w) {
+Map determinePlates(int w) {
   var plates = {};
   if (w % 5 != 0) throw Exception('weight not divisible by 45');
   if (w ~/ 90 > 0) {
@@ -183,9 +201,9 @@ determinePlates(int w) {
 
 
 
-Widget weightButtonsRow(double screenWidth, Bloc bloc) {
+Widget weightButtonsRow(double screenWidth, double screenHeight, Bloc bloc) {
   
-  Weights weights = new Weights(screenWidth, bloc);
+  Weights weights = new Weights(screenWidth, screenHeight, bloc);
   var weightButtons = weights.getWeights;
 
   return Container(
