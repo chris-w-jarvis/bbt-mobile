@@ -125,7 +125,7 @@ Widget weightAnimation(double screenWidth, double screenHeight, BuildContext con
         child: Container(
           padding: EdgeInsets.all(16.0),
           // -32 is to center it against the padding
-          child: barbellAnimationFrame(bloc.weightOnBarbell, screenWidth-32, screenHeight)
+          child: barbellAnimationFrame(bloc.weightOnBarbell, screenWidth-32, screenHeight-32)
         )
       );
     },
@@ -159,18 +159,14 @@ Widget barbellAnimationFrame(int weight, double screenWidth, double screenHeight
         top: 0.0,
         left: 0.0,
       ),
+      Image.asset('assets/45.jpg', height: screenHeight*.25, width: screenWidth,),
       renderPlates(plates, screenWidth, screenHeight)
     ]
   );
 }
 
 Widget renderPlates(Map plates, double screenWidth, double screenHeight) {
-  return Positioned(
-    child: Image.asset('assets/45.jpg'),
-    // for now this is where the weights
-    left: screenWidth*.35,
-    right: screenWidth*.35,
-  );
+  return Container();
 }
   
 Map determinePlates(int w) {
