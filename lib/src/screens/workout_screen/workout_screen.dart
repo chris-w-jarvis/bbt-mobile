@@ -101,52 +101,38 @@ Widget weightAnimation(double screenWidth, double screenHeight, BuildContext con
 
   // Rerender on all events from bloc.weightChanged
 
-//     return GestureDetector(
-//       onTap: () => bloc.removeWeight(-1),
-//       child: StreamBuilder(
-//         stream: bloc.weightChanged,
-//         builder: (context, snapshot) {
-//           return barbellAnimationFrame(bloc.weightOnBarbell, screenWidth);
-//         },
-//       ),
-//     );
-// }
-
   return StreamBuilder(
     stream: bloc.weightChanged,
     builder: (context, snapshot) {
-      // return RaisedButton(
-      //   child: !snapshot.hasData ? Text('45') : Text(bloc.weightOnBarbell.toString()),
-      //   //child: Text("not implemented"),
-      //   onPressed: () => bloc.removeWeight(-1),
-      // );
       return GestureDetector(
         onTap: () => bloc.removeWeight(-1),
-        // onLongPress: () => bloc.emptyBarbell(true),
+        onLongPress: () => bloc.emptyBarbell(true),
         child: Container(
           padding: EdgeInsets.all(16.0),
           // -32 is to center it against the padding
-          child: barbellAnimationFrame(bloc.weightOnBarbell, screenWidth-32, screenHeight-32)
+          child: barbellAnimationFrame(bloc.weightOnBarbell, bloc.getPlates, screenWidth-32, screenHeight-32)
         )
       );
     },
   );
 }
 
-Widget barbellAnimationFrame(int weight, double screenWidth, double screenHeight) {
-  final plates = determinePlates(weight-45);
-  print(plates);
+Widget barbellAnimationFrame(int weight, Map plates, double screenWidth, double screenHeight) {
 
-  // TOO MUCH WEIGHT IMAGE OPTION HERE
-
-  /*
-    How to render this?
-      basic: on render for each plate render a 90 degree rotated rectangle on each side
-      based on value of plate
-        Stack with a box background (to define the viewport) that contains barbell image
-        each plate is added with a width and height in proportion to screen width
-      advanced: animate each plate coming on and off (no plans for this at this time)
-  */
+  // if (weight > 500) return Image.asset('assets/lightweight.png', height: screenHeight*.25, width: screenWidth,);
+  if (weight > 500) {
+    return Stack(
+      overflow: Overflow.clip,
+      children: <Widget>[
+        Image.asset('assets/lightweight.png', height: screenHeight*.25, width: screenWidth,),
+        Positioned(
+          child: Text('$weight'),
+          top: 0,
+          left: 0,
+        )
+      ]
+    );
+  }
 
   List<Widget> stackChildren = <Widget>[
     Container(
@@ -173,33 +159,6 @@ Widget barbellAnimationFrame(int weight, double screenWidth, double screenHeight
     children: stackChildren
   );
 }
-
-Map determinePlates(int w) {
-    var plates = {};
-    if (w % 5 != 0) throw Exception('weight not divisible by 45');
-    // ~/ is floor
-    if (w ~/ 90 > 0) {
-      plates['45'] = w ~/ 90;
-      w = w % 90;
-    }
-    if (w ~/ 50 > 0) {
-      plates['25'] = w ~/ 50;
-      w = w % 50;
-    }
-    if (w ~/ 20 > 0) {
-      plates['10'] = w ~/ 20;
-      w = w % 20;
-    }
-    if (w ~/ 10 > 0) {
-      plates['5'] = w ~/ 10;
-      w = w % 10;
-    }
-    if (w ~/ 5 > 0) {
-      plates['2.5'] = w ~/ 5;
-      w = w % 5;
-    }
-    return plates;
-  }
 
 List<Widget> renderPlates(Map plates, double screenWidth, double screenHeight) {
   var firstPlateInnerDist = screenWidth * .25;
