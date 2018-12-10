@@ -122,6 +122,7 @@ Widget weightAnimation(double screenWidth, double screenHeight, BuildContext con
       // );
       return GestureDetector(
         onTap: () => bloc.removeWeight(-1),
+        // onLongPress: () => bloc.emptyBarbell(true),
         child: Container(
           padding: EdgeInsets.all(16.0),
           // -32 is to center it against the padding
@@ -136,6 +137,8 @@ Widget barbellAnimationFrame(int weight, double screenWidth, double screenHeight
   final plates = determinePlates(weight-45);
   print(plates);
 
+  // TOO MUCH WEIGHT IMAGE OPTION HERE
+
   /*
     How to render this?
       basic: on render for each plate render a 90 degree rotated rectangle on each side
@@ -145,54 +148,202 @@ Widget barbellAnimationFrame(int weight, double screenWidth, double screenHeight
       advanced: animate each plate coming on and off (no plans for this at this time)
   */
 
+  List<Widget> stackChildren = <Widget>[
+    Container(
+      width: screenWidth,
+      height: screenHeight*.25,
+      color: Colors.red[300],
+    ),
+    // just for testing to be able to see weight
+    Positioned(
+      child: Text('$weight'),
+      top: 10,
+      left: screenWidth*.5,
+    ),
+    Image.asset('assets/45.jpg', height: screenHeight*.25, width: screenWidth,)
+  ];
+  
+  List<Widget> renderedPlates = renderPlates(plates, screenWidth, screenHeight);
+  for (Widget w in renderedPlates) {
+    stackChildren.add(w);
+  }
+
   return Stack(
     overflow: Overflow.clip,
-    children: <Widget>[
-      Container(
-        width: screenWidth,
-        height: screenHeight*.25,
-        color: Colors.red[300],
-      ),
-      // just for testing to be able to see weight
-      Positioned(
-        child: Text('$weight'),
-        top: 0.0,
-        left: 0.0,
-      ),
-      Image.asset('assets/45.jpg', height: screenHeight*.25, width: screenWidth,),
-      renderPlates(plates, screenWidth, screenHeight)
-    ]
+    children: stackChildren
   );
 }
 
-Widget renderPlates(Map plates, double screenWidth, double screenHeight) {
-  return Container();
-}
-  
 Map determinePlates(int w) {
-  var plates = {};
-  if (w % 5 != 0) throw Exception('weight not divisible by 45');
-  if (w ~/ 90 > 0) {
-    plates['45'] = w ~/ 90;
-    w = w % 90;
+    var plates = {};
+    if (w % 5 != 0) throw Exception('weight not divisible by 45');
+    // ~/ is floor
+    if (w ~/ 90 > 0) {
+      plates['45'] = w ~/ 90;
+      w = w % 90;
+    }
+    if (w ~/ 50 > 0) {
+      plates['25'] = w ~/ 50;
+      w = w % 50;
+    }
+    if (w ~/ 20 > 0) {
+      plates['10'] = w ~/ 20;
+      w = w % 20;
+    }
+    if (w ~/ 10 > 0) {
+      plates['5'] = w ~/ 10;
+      w = w % 10;
+    }
+    if (w ~/ 5 > 0) {
+      plates['2.5'] = w ~/ 5;
+      w = w % 5;
+    }
+    return plates;
   }
-  if (w ~/ 50 > 0) {
-    plates['25'] = w ~/ 50;
-    w = w % 50;
+
+List<Widget> renderPlates(Map plates, double screenWidth, double screenHeight) {
+  var firstPlateInnerDist = screenWidth * .25;
+  List<Widget> res = <Widget>[];
+  if (plates['45'] != null) {
+    for (int i = 0; i < plates['45']; i++) {
+      res.add(Positioned(
+        child: Container(height: screenHeight*.225, width: screenWidth*.05,
+          decoration: BoxDecoration(
+            color: Colors.grey,
+            border: Border.all(width: 1.0, color: Colors.black38),
+            borderRadius: const BorderRadius.all(const Radius.circular(4.0)),
+          ),
+        ),
+        top: screenHeight*.0125,
+        left: firstPlateInnerDist-(i * screenWidth*.05),
+      ));
+      res.add(Positioned(
+        child: Container(height: screenHeight*.225, width: screenWidth*.05,
+          decoration: BoxDecoration(
+            color: Colors.grey,
+            border: Border.all(width: 1.0, color: Colors.black38),
+            borderRadius: const BorderRadius.all(const Radius.circular(4.0)),
+          ),
+        ),
+        top: screenHeight*.0125,
+        right: firstPlateInnerDist-(i * screenWidth*.05),
+      ));
+    }
+    firstPlateInnerDist-=(plates['45'] * screenWidth*.05);
   }
-  if (w ~/ 20 > 0) {
-    plates['10'] = w ~/ 20;
-    w = w % 20;
+  if (plates['25'] != null) {
+    for (int i = 0; i < plates['25']; i++) {
+      res.add(Positioned(
+        child: Container(height: screenHeight*.15, width: screenWidth*.05,
+          decoration: BoxDecoration(
+            color: Colors.grey,
+            border: Border.all(width: 1.0, color: Colors.black38),
+            borderRadius: const BorderRadius.all(const Radius.circular(4.0)),
+          ),
+        ),
+        top: screenHeight*.05,
+        left: firstPlateInnerDist-(i * screenWidth*.05),
+      ));
+      res.add(Positioned(
+        child: Container(height: screenHeight*.15, width: screenWidth*.05,
+          decoration: BoxDecoration(
+            color: Colors.grey,
+            border: Border.all(width: 1.0, color: Colors.black38),
+            borderRadius: const BorderRadius.all(const Radius.circular(4.0)),
+          ),
+        ),
+        top: screenHeight*.05,
+        right: firstPlateInnerDist-(i * screenWidth*.05),
+      ));
+    }
+    firstPlateInnerDist-=(plates['25'] * screenWidth*.05);
   }
-  if (w ~/ 10 > 0) {
-    plates['5'] = w ~/ 10;
-    w = w % 10;
+  if (plates['10'] != null) {
+    if (plates['45'] != null || plates['25'] != null) firstPlateInnerDist+=screenWidth*.01;
+    for (int i = 0; i < plates['10']; i++) {
+      res.add(Positioned(
+        child: Container(height: screenHeight*.12, width: screenWidth*.04,
+          decoration: BoxDecoration(
+            color: Colors.grey,
+            border: Border.all(width: 1.0, color: Colors.black38),
+            borderRadius: const BorderRadius.all(const Radius.circular(4.0)),
+          ),
+        ),
+        top: screenHeight*.065,
+        left: firstPlateInnerDist-(i * screenWidth*.04),
+      ));
+      res.add(Positioned(
+        child: Container(height: screenHeight*.12, width: screenWidth*.04,
+          decoration: BoxDecoration(
+            color: Colors.grey,
+            border: Border.all(width: 1.0, color: Colors.black38),
+            borderRadius: const BorderRadius.all(const Radius.circular(4.0)),
+          ),
+        ),
+        top: screenHeight*.065,
+        right: firstPlateInnerDist-(i * screenWidth*.04),
+      ));
+    }
+    firstPlateInnerDist-=(plates['10'] * screenWidth*.04);
   }
-  if (w ~/ 5 > 0) {
-    plates['2.5'] = w ~/ 5;
-    w = w % 5;
+  if (plates['5'] != null) {
+    if (plates['10'] != null) firstPlateInnerDist+=screenWidth*.01;
+    else if (plates['45'] != null || plates['25'] != null) firstPlateInnerDist+=screenWidth*.02;
+    for (int i = 0; i < plates['5']; i++) {
+      res.add(Positioned(
+        child: Container(height: screenHeight*.08, width: screenWidth*.03,
+          decoration: BoxDecoration(
+            color: Colors.grey,
+            border: Border.all(width: 1.0, color: Colors.black38),
+            borderRadius: const BorderRadius.all(const Radius.circular(4.0)),
+          ),
+        ),
+        top: screenHeight*.085,
+        left: firstPlateInnerDist-(i * screenWidth*.03),
+      ));
+      res.add(Positioned(
+        child: Container(height: screenHeight*.08, width: screenWidth*.03,
+          decoration: BoxDecoration(
+            color: Colors.grey,
+            border: Border.all(width: 1.0, color: Colors.black38),
+            borderRadius: const BorderRadius.all(const Radius.circular(4.0)),
+          ),
+        ),
+        top: screenHeight*.085,
+        right: firstPlateInnerDist-(i * screenWidth*.03),
+      ));
+    }
+    firstPlateInnerDist-=(plates['5'] * screenWidth*.04);
   }
-  return plates;
+  if (plates['2.5'] != null) {
+    if (plates['10'] != null || plates['5'] != null) firstPlateInnerDist+=screenWidth*.01;
+    else if (plates['45'] != null || plates['25'] != null) firstPlateInnerDist+=screenWidth*.02;
+    for (int i = 0; i < plates['2.5']; i++) {
+      res.add(Positioned(
+        child: Container(height: screenHeight*.04, width: screenWidth*.03,
+          decoration: BoxDecoration(
+            color: Colors.grey,
+            border: Border.all(width: 1.0, color: Colors.black38),
+            borderRadius: const BorderRadius.all(const Radius.circular(4.0)),
+          ),
+        ),
+        top: screenHeight*.105,
+        left: firstPlateInnerDist-(i * screenWidth*.03),
+      ));
+      res.add(Positioned(
+        child: Container(height: screenHeight*.04, width: screenWidth*.03,
+          decoration: BoxDecoration(
+            color: Colors.grey,
+            border: Border.all(width: 1.0, color: Colors.black38),
+            borderRadius: const BorderRadius.all(const Radius.circular(4.0)),
+          ),
+        ),
+        top: screenHeight*.105,
+        right: firstPlateInnerDist-(i * screenWidth*.03),
+      ));
+    }
+  }
+  return res;
 }
 
 
