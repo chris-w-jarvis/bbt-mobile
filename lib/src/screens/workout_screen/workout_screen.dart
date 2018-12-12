@@ -14,7 +14,8 @@ class WorkoutScreen extends StatelessWidget {
       children: <Widget>[
         weightAnimation(screenWidth, screenHeigth, context, bloc),
         liftAndRepsRow(bloc),
-        repsPresets(bloc),
+        repsPresets(bloc, screenWidth),
+        Container(color: Color.fromRGBO(238, 242, 255, 1.0), width: screenWidth, height: 2),
         weightButtonsRow(screenWidth, screenHeigth, bloc),
         notesRow(bloc),
         addSetButton(bloc)
@@ -23,23 +24,26 @@ class WorkoutScreen extends StatelessWidget {
   }
 }
 
-Widget repsPresets(Bloc bloc) {
+Widget repsPresets(Bloc bloc, double screenWidth) {
   return Row(
     mainAxisAlignment:MainAxisAlignment.end,
     children: <Widget>[
-      repPreset(bloc, '1'),
-      repPreset(bloc, '3'),
-      repPreset(bloc, '5'),
-      repPreset(bloc, '8'),
-      repPreset(bloc, '12')
+      repPreset(bloc, '1', screenWidth),
+      repPreset(bloc, '3', screenWidth),
+      repPreset(bloc, '5', screenWidth),
+      repPreset(bloc, '8', screenWidth),
+      repPreset(bloc, '12', screenWidth)
     ],
   );
 }
 
-Widget repPreset(Bloc bloc, String reps) {
+Widget repPreset(Bloc bloc, String reps, double screenWidth) {
   return Container(
     padding: EdgeInsets.all(8.0),
-    margin: EdgeInsets.only(left: 8.0, right: 8.0),
+    margin: EdgeInsets.only(left: screenWidth/40, right: screenWidth/40),
+    decoration: BoxDecoration(
+      color: Color.fromRGBO(214, 218, 240, 1.0)
+    ),
     child: StreamBuilder(
       stream: bloc.reps,
       builder: (context, snapshot) {
@@ -71,6 +75,9 @@ Widget liftAndRepsRow(Bloc bloc) {
         Expanded(child: Center(child: repsMenu(bloc)))
       ],
     ),
+    decoration: BoxDecoration(
+      color: Color.fromRGBO(238, 242, 255, 1.0)
+    ),
   );
 }
 
@@ -80,9 +87,9 @@ Widget liftDropdown(List<String> lifts, Bloc bloc) {
   lifts.forEach(
     (lift) => liftsList.add(
         new DropdownMenuItem<String>(
-        value: lift,
-        child: Text(lift)
-     )
+          value: lift,
+          child: Text(lift)
+        )
     )
   );
 
@@ -113,6 +120,9 @@ Widget repsMenu(Bloc bloc) {
     stream: bloc.reps,
     builder: (context, snapshot) {
       return Container(
+        decoration: BoxDecoration(
+          color: Color.fromRGBO(238, 242, 255, 1.0)
+        ),
         child: TextField(
           keyboardType: TextInputType.numberWithOptions(),
           decoration: InputDecoration(
@@ -128,10 +138,7 @@ Widget repsMenu(Bloc bloc) {
 }
 
 Widget weightAnimation(double screenWidth, double screenHeight, BuildContext context, Bloc bloc) {
-
-
   // Rerender on all events from bloc.weightChanged
-
   return StreamBuilder(
     stream: bloc.weightChanged,
     builder: (context, snapshot) {
@@ -139,6 +146,9 @@ Widget weightAnimation(double screenWidth, double screenHeight, BuildContext con
         onTap: () => bloc.removeWeight(-1),
         onLongPress: () => bloc.emptyBarbell(true),
         child: Container(
+          decoration: BoxDecoration(
+            color: Color.fromRGBO(214, 218, 240, 1.0)
+          ),
           padding: EdgeInsets.all(16.0),
           // -32 is to center it against the padding
           child: barbellAnimationFrame(bloc.weightOnBarbell, bloc.getPlates, screenWidth-32, screenHeight-32)
@@ -166,12 +176,6 @@ Widget barbellAnimationFrame(int weight, Map plates, double screenWidth, double 
   }
 
   List<Widget> stackChildren = <Widget>[
-    Container(
-      width: screenWidth,
-      height: screenHeight*.25,
-      color: Colors.red[300],
-    ),
-    // just for testing to be able to see weight
     Positioned(
       child: Text('$weight'),
       top: 10,
@@ -344,6 +348,9 @@ Widget weightButtonsRow(double screenWidth, double screenHeight, Bloc bloc) {
   var weightButtons = weights.getWeights;
 
   return Container(
+    decoration: BoxDecoration(
+      color: Color.fromRGBO(214, 218, 240, 1.0)
+    ),
     padding: EdgeInsets.all(16.0),
     child: Row(
       children: <Widget>[
@@ -367,11 +374,16 @@ Widget weightButtonsRow(double screenWidth, double screenHeight, Bloc bloc) {
 }
 
 Widget notesRow(Bloc bloc) {
-  return TextField(
-    decoration: InputDecoration(
-      hintText: 'Notes, eg a modifier like "front" or "hack"'
+  return Container(
+    child: TextField(
+      decoration: InputDecoration(
+        hintText: 'Notes, eg a modifier like "front" or "hack"'
+      ),
+      onChanged: (val) {print('notes row: $val');},
     ),
-    onChanged: (val) {print('notes row: $val');},
+    decoration: BoxDecoration(
+      color: Color.fromRGBO(238, 242, 255, 1.0)
+    )
   );
 }
 
@@ -380,9 +392,13 @@ Widget addSetButton(Bloc bloc) {
     stream: bloc.submitValid,
     builder: (context, snapshot) {
       return Container(
+        decoration: BoxDecoration(
+          color: Color.fromRGBO(238, 242, 255, 1.0)
+        ),
         padding: EdgeInsets.all(8.0),
         child: RaisedButton(
-          child: Text('Add Set'),
+          child: Text('/Add Set/', style: TextStyle(color: Colors.red)),
+          color: Color.fromRGBO(214, 218, 240, 1.0),
           onPressed: !snapshot.hasData ? null : bloc.addSet,
         ),
       );
