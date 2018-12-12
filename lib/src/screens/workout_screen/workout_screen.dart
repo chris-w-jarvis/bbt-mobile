@@ -14,12 +14,42 @@ class WorkoutScreen extends StatelessWidget {
       children: <Widget>[
         weightAnimation(screenWidth, screenHeigth, context, bloc),
         liftAndRepsRow(bloc),
+        repsPresets(bloc),
         weightButtonsRow(screenWidth, screenHeigth, bloc),
-        //notesRow(bloc),
+        notesRow(bloc),
         addSetButton(bloc)
       ],
     );
   }
+}
+
+Widget repsPresets(Bloc bloc) {
+  return Row(
+    mainAxisAlignment:MainAxisAlignment.end,
+    children: <Widget>[
+      repPreset(bloc, '1'),
+      repPreset(bloc, '3'),
+      repPreset(bloc, '5'),
+      repPreset(bloc, '8'),
+      repPreset(bloc, '12')
+    ],
+  );
+}
+
+Widget repPreset(Bloc bloc, String reps) {
+  return Container(
+    padding: EdgeInsets.all(8.0),
+    margin: EdgeInsets.only(left: 8.0, right: 8.0),
+    child: StreamBuilder(
+      stream: bloc.reps,
+      builder: (context, snapshot) {
+        return GestureDetector(
+          onTap: () => bloc.changeReps(reps),
+          child: Text(reps),
+        );
+      },
+    ),
+  );
 }
 
 Widget liftAndRepsRow(Bloc bloc) {
@@ -89,7 +119,8 @@ Widget repsMenu(Bloc bloc) {
             hintText: 'reps',
             errorText: snapshot.error
           ),
-          onChanged: bloc.changeReps
+          onChanged: bloc.changeReps,
+          controller: TextEditingController(text: snapshot.hasData ? snapshot.data : ''),
         ),
       );
     }
@@ -161,7 +192,7 @@ Widget barbellAnimationFrame(int weight, Map plates, double screenWidth, double 
 }
 
 List<Widget> renderPlates(Map plates, double screenWidth, double screenHeight) {
-  var firstPlateInnerDist = screenWidth * .25;
+  var firstPlateInnerDist = screenWidth * .225;
   List<Widget> res = <Widget>[];
   if (plates['45'] != null) {
     for (int i = 0; i < plates['45']; i++) {
