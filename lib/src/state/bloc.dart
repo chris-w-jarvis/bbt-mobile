@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:rxdart/rxdart.dart';
 import 'transformers.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Bloc extends Transformers {
 
@@ -25,6 +26,15 @@ class Bloc extends Transformers {
     this._emptyBarbellBtn.listen((_) { _plates.clear(); weightOnBarbell = 45;});
   }
 
+  /*
+    logic to load lift names from shared prefs:
+      the lift drop down works by sticking the value selected into the liftName stream
+      idea: add a new stream that will be seeded with initial values, merge this with the liftName
+      stream that is used when an item is selected in the dropdown, the lifts widget will listen
+      to this stream and know whether the value is being changed or if new lifts have been loaded so
+      the dropdown list needs to be remade
+  */
+
   //var _weightsStream = <int>[];
   var _plates = {};
   var weightOnBarbell = 0;
@@ -37,7 +47,7 @@ class Bloc extends Transformers {
   final _emptyBarbellBtn = BehaviorSubject<bool>();
 
   final _reps = BehaviorSubject<String>();
-  final _liftName = BehaviorSubject<String>(seedValue: 'Squat');
+  final _liftName = BehaviorSubject<Map<String,String>>(seedValue: {'type':'state_change', 'val':'Squat'});
 
 
   // update current set
